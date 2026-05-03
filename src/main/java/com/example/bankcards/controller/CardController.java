@@ -4,6 +4,7 @@ import com.example.bankcards.dto.response.CardResponseDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.CardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ public class CardController {
 
     private final CardService cardService;
     private final UserRepository userRepository;
+    private final CardRepository cardRepository;
 
     @Operation(
             summary = "Get card details by ID",
@@ -97,5 +99,22 @@ public class CardController {
         Card savedCard = cardService.saveCard(card);
 
         return ResponseEntity.ok(new CardResponseDTO(savedCard));
+    }
+
+    @PatchMapping("/{id}/block")
+    @Operation(summary = "Block own card", description = "Authenticated user requests to block their card")
+    public ResponseEntity<CardResponseDTO> blockMyCard(@PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User owner = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Card card = cardService.getCardById(id);
+
+        if (!card.getUser().getId().equals(owner.getId())) {
+            throw new RuntimeException("Access denied: card does not belong to you");
+        }
+
+        card.setStatus(CardStatus.BLOCKED);
+        return ResponseEntity.ok(new CardResponseDTO(cardRepository.save(card)));
     }
 }
