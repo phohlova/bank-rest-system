@@ -24,4 +24,7 @@ public interface CardService {
     TransferResponse transferMoney(Long userId, String fromCardNumber, String toCardNumber, BigDecimal amount);
 
     Page<CardResponseDTO> getAllCardsAdmin(Pageable pageable);
+
+    CardResponseDTO blockCard(Long cardId);
+    CardResponseDTO activateCard(Long cardId);
 }

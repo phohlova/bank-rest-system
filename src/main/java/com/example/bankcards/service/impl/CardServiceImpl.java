@@ -106,4 +106,20 @@ public class CardServiceImpl implements CardService {
     public Page<CardResponseDTO> getAllCardsAdmin(Pageable pageable) {
         return cardRepository.findAll(pageable).map(CardResponseDTO::new);
     }
+
+    @Override
+    public CardResponseDTO blockCard(Long cardId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+        card.setStatus(CardStatus.BLOCKED);
+        return new CardResponseDTO(cardRepository.save(card));
+    }
+
+    @Override
+    public CardResponseDTO activateCard(Long cardId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+        card.setStatus(CardStatus.ACTIVE);
+        return new CardResponseDTO(cardRepository.save(card));
+    }
 }

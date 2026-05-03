@@ -21,4 +21,14 @@ public class AdminCardController {
     public ResponseEntity<Page<CardResponseDTO>> getAllCards(Pageable pageable) {
         return ResponseEntity.ok(cardService.getAllCardsAdmin(pageable));
     }
+
+    @PatchMapping("/{id}/block")
+    public ResponseEntity<CardResponseDTO> blockCard(@PathVariable Long id) {
+        return ResponseEntity.ok(cardService.blockCard(id));
+    }
+
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<CardResponseDTO> activateCard(@PathVariable Long id) {
+        return ResponseEntity.ok(cardService.activateCard(id));
+    }
 }
