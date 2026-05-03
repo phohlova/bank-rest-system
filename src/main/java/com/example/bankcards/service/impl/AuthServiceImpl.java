@@ -9,6 +9,7 @@ import com.example.bankcards.service.AuthService;
 import com.example.bankcards.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,6 +47,10 @@ public class AuthServiceImpl implements AuthService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid username or password");
+        }
+
+        if (!user.isActive()) {
+            throw new DisabledException("User account is blocked by administrator");
         }
 
         UserBuilder userBuilder = org.springframework.security.core.userdetails.User
