@@ -21,4 +21,14 @@ public class AdminUserController {
     public ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
+
+    @PatchMapping("/{id}/block")
+    public ResponseEntity<UserResponseDTO> blockUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.blockUser(id));
+    }
+
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<UserResponseDTO> activateUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.activateUser(id));
+    }
 }
