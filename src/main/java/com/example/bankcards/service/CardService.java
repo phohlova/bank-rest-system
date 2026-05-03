@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.response.CardResponseDTO;
 import com.example.bankcards.dto.response.TransferResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
@@ -21,4 +22,6 @@ public interface CardService {
     void deleteCard(Long id);
 
     TransferResponse transferMoney(Long userId, String fromCardNumber, String toCardNumber, BigDecimal amount);
+
+    Page<CardResponseDTO> getAllCardsAdmin(Pageable pageable);
 }

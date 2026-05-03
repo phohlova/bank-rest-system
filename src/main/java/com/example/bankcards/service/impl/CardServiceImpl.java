@@ -1,5 +1,6 @@
 package com.example.bankcards.service.impl;
 
+import com.example.bankcards.dto.response.CardResponseDTO;
 import com.example.bankcards.dto.response.TransferResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
@@ -99,5 +100,10 @@ public class CardServiceImpl implements CardService {
         }
         String lastFour = fullNumber.substring(fullNumber.length() - 4);
         return "**** **** **** " + lastFour;
+    }
+
+    @Override
+    public Page<CardResponseDTO> getAllCardsAdmin(Pageable pageable) {
+        return cardRepository.findAll(pageable).map(CardResponseDTO::new);
     }
 }
