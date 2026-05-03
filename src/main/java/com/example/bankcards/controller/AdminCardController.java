@@ -1,7 +1,9 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.request.AdminCreateCardRequest;
 import com.example.bankcards.dto.response.CardResponseDTO;
 import com.example.bankcards.service.CardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,5 +32,10 @@ public class AdminCardController {
     @PatchMapping("/{id}/activate")
     public ResponseEntity<CardResponseDTO> activateCard(@PathVariable Long id) {
         return ResponseEntity.ok(cardService.activateCard(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<CardResponseDTO> createCard(@RequestBody @Valid AdminCreateCardRequest request) {
+        return ResponseEntity.ok(cardService.createCardForUser(request));
     }
 }

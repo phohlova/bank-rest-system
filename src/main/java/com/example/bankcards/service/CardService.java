@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.request.AdminCreateCardRequest;
 import com.example.bankcards.dto.response.CardResponseDTO;
 import com.example.bankcards.dto.response.TransferResponse;
 import com.example.bankcards.entity.Card;
@@ -27,4 +28,6 @@ public interface CardService {
 
     CardResponseDTO blockCard(Long cardId);
     CardResponseDTO activateCard(Long cardId);
+
+    CardResponseDTO createCardForUser(AdminCreateCardRequest request);
 }

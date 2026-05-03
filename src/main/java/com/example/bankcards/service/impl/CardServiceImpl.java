@@ -1,10 +1,13 @@
 package com.example.bankcards.service.impl;
 
+import com.example.bankcards.dto.request.AdminCreateCardRequest;
 import com.example.bankcards.dto.response.CardResponseDTO;
 import com.example.bankcards.dto.response.TransferResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
+import com.example.bankcards.entity.User;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.CardService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +26,8 @@ import java.util.UUID;
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
+    private final UserRepository userRepository;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     @Override
     public Card getCardById(Long id) {
@@ -121,5 +127,35 @@ public class CardServiceImpl implements CardService {
                 .orElseThrow(() -> new RuntimeException("Card not found"));
         card.setStatus(CardStatus.ACTIVE);
         return new CardResponseDTO(cardRepository.save(card));
+    }
+
+    @Override
+    public CardResponseDTO createCardForUser(AdminCreateCardRequest request) {
+
+        User targetUser = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found: " + request.getUsername()));
+
+        String cardNumber = generateCardNumber();
+        String cvv = String.format("%03d", secureRandom.nextInt(1000));
+
+        Card card = new Card();
+        card.setCardNumber(cardNumber);
+        card.setCardHolder(request.getCardHolder());
+        card.setExpiryDate(request.getExpiryDate());
+        card.setCvv(cvv);
+        card.setBalance(request.getInitialBalance());
+        card.setStatus(request.getStatus());
+        card.setUser(targetUser);
+
+        Card savedCard = cardRepository.save(card);
+        return new CardResponseDTO(savedCard);
+    }
+
+    private String generateCardNumber() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 16; i++) {
+            sb.append(secureRandom.nextInt(10));
+        }
+        return sb.toString();
     }
 }
