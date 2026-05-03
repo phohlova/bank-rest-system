@@ -26,3 +26,7 @@ spring:
 logging:
   level:
     com.example.bankcards: DEBUG
+
+jwt:
+  secret: dGhpcyBpcyBhIHZlcnkgc2VjdXJlIGFuZCBsb25nIGtleSBmb3IgZGV2ZWxvcG1lbnQ=
+  expiration: 86400000
