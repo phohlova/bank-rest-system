@@ -19,12 +19,11 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // Инъекция шифровщика паролей
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
-        // Проверяем, есть ли уже такой пользователь
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("User already exists");
         }
@@ -32,12 +31,12 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // ВАЖНО: Хешируем!
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setActive(true);
 
         userRepository.save(user);
 
-        return login(new LoginRequest(request.getUsername(), request.getPassword())); // Сразу логиним
+        return login(new LoginRequest(request.getUsername(), request.getPassword()));
     }
 
     @Override
@@ -52,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
         UserBuilder userBuilder = org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .roles("USER"); // Пока всем даем роль USER
+                .roles("USER");
 
         UserDetails userDetails = userBuilder.build();
 
