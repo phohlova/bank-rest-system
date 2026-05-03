@@ -38,4 +38,10 @@ public class AdminCardController {
     public ResponseEntity<CardResponseDTO> createCard(@RequestBody @Valid AdminCreateCardRequest request) {
         return ResponseEntity.ok(cardService.createCardForUser(request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCard(@PathVariable Long id) {
+        cardService.deleteCardAdmin(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -50,11 +50,6 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void deleteCard(Long id) {
-        cardRepository.deleteById(id);
-    }
-
-    @Override
     @Transactional
     public TransferResponse transferMoney(Long userId, String fromCardNumber, String toCardNumber, BigDecimal amount) {
 
@@ -157,5 +152,12 @@ public class CardServiceImpl implements CardService {
             sb.append(secureRandom.nextInt(10));
         }
         return sb.toString();
+    }
+
+    @Override
+    public void deleteCardAdmin(Long cardId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+        cardRepository.delete(card);
     }
 }
