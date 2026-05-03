@@ -1,6 +1,7 @@
 package com.example.bankcards.service.impl;
 
 import com.example.bankcards.entity.Card;
+import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +24,12 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Page<Card> getAllCardsByUser(Long userId, Pageable pageable) {
-        return cardRepository.findByUserId(userId, pageable);
+    public Page<Card> getAllCardsByUser(Long userId, Pageable pageable, Optional<CardStatus> status) {
+        if (status.isPresent()) {
+            return cardRepository.findByUserIdAndStatus(userId, status.get(), pageable);
+        } else {
+            return cardRepository.findByUserId(userId, pageable);
+        }
     }
 
     @Override
