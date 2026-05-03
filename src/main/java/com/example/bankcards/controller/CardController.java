@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/cards")
 @RequiredArgsConstructor
@@ -22,6 +24,24 @@ public class CardController {
     public ResponseEntity<CardResponseDTO> getCardById(@PathVariable Long id) {
         Card card = cardService.getCardById(id);
         return ResponseEntity.ok(new CardResponseDTO(card));
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<CardResponseDTO>> getMyCards() {
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+        List<Card> userCards = cardService.getAllCardsByUser(currentUser.getId());
+
+        List<CardResponseDTO> response = userCards.stream()
+                .map(CardResponseDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
