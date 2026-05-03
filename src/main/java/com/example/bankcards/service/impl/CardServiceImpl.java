@@ -4,6 +4,8 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +23,8 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public List<Card> getAllCardsByUser(Long userId) {
-        return cardRepository.findByUserId(userId);
+    public Page<Card> getAllCardsByUser(Long userId, Pageable pageable) {
+        return cardRepository.findByUserId(userId, pageable);
     }
 
     @Override

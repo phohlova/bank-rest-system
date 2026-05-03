@@ -9,8 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -27,7 +28,10 @@ public class CardController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<CardResponseDTO>> getMyCards() {
+    public ResponseEntity<Page<CardResponseDTO>> getMyCards(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -35,11 +39,9 @@ public class CardController {
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
-        List<Card> userCards = cardService.getAllCardsByUser(currentUser.getId());
-
-        List<CardResponseDTO> response = userCards.stream()
-                .map(CardResponseDTO::new)
-                .toList();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Card> cardPage = cardService.getAllCardsByUser(currentUser.getId(), pageable);
+        Page<CardResponseDTO> response = cardPage.map(CardResponseDTO::new);
 
         return ResponseEntity.ok(response);
     }
