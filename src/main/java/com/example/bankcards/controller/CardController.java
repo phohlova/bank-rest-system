@@ -1,5 +1,6 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.response.CardResponseDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.repository.UserRepository;
@@ -18,12 +19,13 @@ public class CardController {
     private final UserRepository userRepository;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Card> getCardById(@PathVariable Long id) {
-        return ResponseEntity.ok(cardService.getCardById(id));
+    public ResponseEntity<CardResponseDTO> getCardById(@PathVariable Long id) {
+        Card card = cardService.getCardById(id);
+        return ResponseEntity.ok(new CardResponseDTO(card));
     }
 
     @PostMapping
-    public ResponseEntity<Card> createCard(@RequestBody Card card) {
+    public ResponseEntity<CardResponseDTO> createCard(@RequestBody Card card) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -32,7 +34,8 @@ public class CardController {
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         card.setUser(currentUser);
+        Card savedCard = cardService.saveCard(card);
 
-        return ResponseEntity.ok(cardService.saveCard(card));
+        return ResponseEntity.ok(new CardResponseDTO(savedCard));
     }
 }
